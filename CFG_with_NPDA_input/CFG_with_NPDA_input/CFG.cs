@@ -155,23 +155,22 @@ namespace CFG_with_NPDA_input
             writer.Close();
         }
 
-        public string HasWord(string word)
+        public bool HasWord(string word, out string derivation)
         {
-            List<List<char>> derivation = new List<List<char>>();
-            bool hasDerivation = FindDerivation(word, 0, new List<int>() { StartVariable }, derivation);
-            List<char> result = new List<char>();
-            result.AddRange(hasDerivation.ToString());
-            result.Add('\n');
+            List<List<char>> helpingDerivation = new List<List<char>>();
+            bool hasDerivation = FindDerivation(word, 0, new List<int>() { StartVariable }, helpingDerivation);
+            List<char> derivationResult = new List<char>();
             if (hasDerivation)
             {
-                for (int i = derivation.Count - 1; i > 0; i--)
+                for (int i = helpingDerivation.Count - 1; i > 0; i--)
                 {
-                    result.AddRange(derivation[i]);
-                    result.AddRange(" => ");
+                    derivationResult.AddRange(helpingDerivation[i]);
+                    derivationResult.AddRange(" => ");
                 }
-                result.AddRange(derivation[0]);
+                derivationResult.AddRange(helpingDerivation[0]);
             }
-            return string.Concat(result);
+            derivation = string.Concat(derivationResult);
+            return hasDerivation;
         }
 
         private bool FindDerivation(string word, int currentIndex, List<int> variables, List<List<char>> derivation)
