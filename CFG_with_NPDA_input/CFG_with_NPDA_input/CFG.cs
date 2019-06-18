@@ -11,7 +11,7 @@ namespace CFG_with_NPDA_input
     {
         private List<string> NumberToVariable { get; }
         public List<Tuple<List<char>, List<int>, List<int>>> Transitions { get; }
-        public int InitialState { get; }
+        public int StartVariable { get; }
         public int StateCount { get; }
 
         public CFG(NPDA npda)
@@ -44,7 +44,7 @@ namespace CFG_with_NPDA_input
                         else
                         {
                             NumberToVariable.Add(leftSide);
-                            indexOfLeftSide = Transitions.Count - 1;
+                            indexOfLeftSide = Transitions.Count;
                             Transitions.Add(new Tuple<List<char>, List<int>, List<int>>
                                 (new List<char>(), new List<int>(), new List<int>()));
                             Transitions[indexOfLeftSide].Item1.Add(transition.Item2[i]);
@@ -54,7 +54,7 @@ namespace CFG_with_NPDA_input
                         if (source == npda.InitialState &&
                             transition.Item3[i] == npda.StackInitialSymbol &&
                             transition.Item1[i] == npda.FinalStates[0]) //We should only have one final state
-                            InitialState = indexOfLeftSide;
+                            StartVariable = indexOfLeftSide;
                     }
                     else
                     {
@@ -77,7 +77,7 @@ namespace CFG_with_NPDA_input
                                 if (source == npda.InitialState &&
                                     transition.Item3[i] == npda.StackInitialSymbol &&
                                     k == npda.FinalStates[0]) //We should only have one final state
-                                    InitialState = indexOfRightSide1;
+                                    StartVariable = indexOfRightSide1;
 
                                 indexOfRightSide2 = NumberToVariable.IndexOf(rightSide2);
                                 if (indexOfRightSide2 == -1)
@@ -90,7 +90,7 @@ namespace CFG_with_NPDA_input
                                 if (transition.Item1[i] == npda.InitialState &&
                                     transition.Item4[i][0] == npda.StackInitialSymbol &&
                                     l == npda.FinalStates[0]) //We should only have one final state
-                                    InitialState = indexOfRightSide2;
+                                    StartVariable = indexOfRightSide2;
 
                                 indexOfLeftSide = NumberToVariable.IndexOf(leftSide);
                                 if (indexOfLeftSide != -1)
@@ -111,7 +111,7 @@ namespace CFG_with_NPDA_input
                                 if (l == npda.InitialState &&
                                     transition.Item4[i][1] == npda.StackInitialSymbol &&
                                     k == npda.FinalStates[0]) //We should only have one final state
-                                    InitialState = indexOfLeftSide;
+                                    StartVariable = indexOfLeftSide;
                             }
                         }
                     }
@@ -153,6 +153,113 @@ namespace CFG_with_NPDA_input
                 writer.WriteLine(string.Concat(transition));
             }
             writer.Close();
+        }
+
+        public string HasWord(string word)
+        {
+            List<List<char>> derivation = new List<List<char>>();
+            bool hasDerivation = FindDerivation(word, 0, new List<int>() { StartVariable }, derivation);
+            List<char> result = new List<char>();
+            result.AddRange(hasDerivation.ToString());
+            result.Add('\n');
+            if (hasDerivation)
+            {
+                for (int i = derivation.Count - 1; i > 0; i--)
+                {
+                    result.AddRange(derivation[i]);
+                    result.AddRange(" => ");
+                }
+                result.AddRange(derivation[0]);
+            }
+            return string.Concat(result);
+        }
+
+        private bool FindDerivation(string word, int currentIndex, List<int> variables, List<List<char>> derivation)
+        {
+            int variable;
+            if (currentIndex == word.Length)
+                if (variables.Count == 0)
+                {
+                    List<char> step = new List<char>();
+                    step.AddRange(word);
+                    derivation.Add(step);
+                    return true;
+                }
+                else
+                {
+                    variable = variables[variables.Count - 1];
+                    variables.RemoveAt(variables.Count - 1);
+                    for (int i = 0; i < Transitions[variable].Item1.Count; i++)
+                    {
+                        if (Transitions[variable].Item1[i] != '_')
+                            continue;
+
+                        List<int> newVariables = new List<int>(variables.Count);
+                        newVariables.AddRange(variables);
+                        if (Transitions[variable].Item2[i] != -1)
+                        {
+                            newVariables.Add(Transitions[variable].Item3[i]);
+                            newVariables.Add(Transitions[variable].Item2[i]);
+                        }
+                        if (FindDerivation(word, currentIndex, newVariables, derivation))
+                        {
+                            List<char> step = new List<char>();
+                            step.AddRange(word);
+                            step.AddRange(NumberToVariable[variable]);
+                            for (int j = variables.Count - 1; j >= 0; j--)
+                                step.AddRange(NumberToVariable[variables[j]]);
+                            derivation.Add(step);
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+
+            if (variables.Count == 0)
+                return false;
+            variable = variables[variables.Count - 1];
+            variables.RemoveAt(variables.Count - 1);
+            bool currentIndexAdded;
+            for (int i = 0; i < Transitions[variable].Item1.Count; i++)
+            {
+                currentIndexAdded = false;
+                if (Transitions[variable].Item1[i] == word[currentIndex])
+                {
+                    currentIndex++;
+                    currentIndexAdded = true;
+                }
+                else if (Transitions[variable].Item1[i] != '_')
+                    continue;
+
+                List<int> newVariables = new List<int>(variables.Count);
+                newVariables.AddRange(variables);
+                if (Transitions[variable].Item2[i] != -1)
+                {
+                    newVariables.Add(Transitions[variable].Item3[i]);
+                    newVariables.Add(Transitions[variable].Item2[i]);
+                }
+                if (FindDerivation(word, currentIndex, newVariables, derivation))
+                {
+                    List<char> step = new List<char>();
+                    if (currentIndexAdded)
+                        for (int j = 0; j < currentIndex - 1; j++)
+                            step.Add(word[j]);
+                    else
+                        for (int j = 0; j < currentIndex - 1; j++)
+                            step.Add(word[j]);
+
+                    step.AddRange(NumberToVariable[variable]);
+                    for (int j = variables.Count - 1; j >= 0; j--)
+                        step.AddRange(NumberToVariable[variables[j]]);
+                    derivation.Add(step);
+                    return true;
+                }
+                else if (currentIndexAdded)
+                    currentIndex--;
+
+            }
+            return false;
         }
     }
 }
