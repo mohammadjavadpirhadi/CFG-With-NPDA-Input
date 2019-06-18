@@ -7,7 +7,7 @@ namespace CFG_with_NPDA_input
 {
     class NPDA
     {
-        public Tuple<List<long>, List<char>, List<string>, List<string>>[] Transitions { get; }
+        public Tuple<List<long>, List<char>, List<char>, List<string>>[] Transitions { get; }
         public long StateCount { get; }
         public List<char> Alphabet { get; }
         private Stack<char> Stack { get; }
@@ -18,9 +18,9 @@ namespace CFG_with_NPDA_input
         public List<long> FinalStates { get; }
         static readonly Exception InputIncorrectException = new Exception("Input Was Not In Correct Format!");
 
-        public NPDA(string CFGPath)
+        public NPDA(string NPDAPath)
         {
-            StreamReader reader = new StreamReader(CFGPath);
+            StreamReader reader = new StreamReader(NPDAPath);
             InitialStateSet = false;
             Alphabet = new List<char>();
             StackAlphabet = new List<char>();
@@ -38,10 +38,10 @@ namespace CFG_with_NPDA_input
             {
                 throw InputIncorrectException;
             }
-            Transitions = new Tuple<List<long>, List<char>, List<string>, List<string>>[StateCount];
+            Transitions = new Tuple<List<long>, List<char>, List<char>, List<string>>[StateCount];
             for (int i = 0; i < StateCount; i++)
-                Transitions[i] = new Tuple<List<long>, List<char>, List<string>, List<string>>
-                    (new List<long>(), new List<char>(), new List<string>(), new List<string>());
+                Transitions[i] = new Tuple<List<long>, List<char>, List<char>, List<string>>
+                    (new List<long>(), new List<char>(), new List<char>(), new List<string>());
             FinalStates = new List<long>();
             string[] lines = reader.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string line in lines)
@@ -105,19 +105,21 @@ namespace CFG_with_NPDA_input
             Transitions[source].Item2.Add(transition[1][0]);
 
             //Check for stack alphabet correctness
-            foreach (char chr in transition[2])  //pop element
-            {
-                if (chr != '_' && chr != StackInitialSymbol && !StackAlphabet.Contains(chr))
+            if(transition[2].Length != 1)   //pop element
+                throw InputIncorrectException;
+            else if(transition[2][0] != '_' && transition[2][0] != StackInitialSymbol && !StackAlphabet.Contains(transition[2][0]))
                     throw InputIncorrectException;
-            }
-            foreach (char chr in transition[3]) //push element
+
+            if(transition[3] != "_" && transition[3].Length != 2)   //push element
+                throw InputIncorrectException;
+            foreach (char chr in transition[3]) 
             {
                 if (chr != '_' && chr != StackInitialSymbol && !StackAlphabet.Contains(chr))
                     throw InputIncorrectException;
             }
 
             //Add pop and push elements
-            Transitions[source].Item3.Add(transition[2]);
+            Transitions[source].Item3.Add(transition[2][0]);
             Transitions[source].Item4.Add(transition[3]);
         }
     }

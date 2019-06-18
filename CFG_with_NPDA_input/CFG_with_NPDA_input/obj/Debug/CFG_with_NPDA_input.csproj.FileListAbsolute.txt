@@ -1,0 +1,9 @@
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\bin\Debug\CFG_with_NPDA_input.exe.config
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\bin\Debug\CFG_with_NPDA_input.exe
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\bin\Debug\CFG_with_NPDA_input.pdb
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\obj\Debug\CFG_with_NPDA_input.csprojResolveAssemblyReference.cache
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\obj\Debug\CFG_with_NPDA_input.Properties.Resources.resources
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\obj\Debug\CFG_with_NPDA_input.csproj.GenerateResource.Cache
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\obj\Debug\CFG_with_NPDA_input.csproj.CoreCompileInputs.cache
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\obj\Debug\CFG_with_NPDA_input.exe
+D:\MyFolder\university\نظریه ی زبان ها و ماشین ها\Projects\Project2\CFG-With-NPDA-Input\CFG_with_NPDA_input\CFG_with_NPDA_input\obj\Debug\CFG_with_NPDA_input.pdb
